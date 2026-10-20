@@ -1,28 +1,15 @@
-name: Build Mac app
+const { app, BrowserWindow } = require("electron");
 
-on:
-  workflow_dispatch:
-  push:
-    branches: [main]
+app.whenReady().then(() => {
+  const win = new BrowserWindow({
+    fullscreen: true,
+    title: "GTA5",
+    autoHideMenuBar: true
+  });
 
-jobs:
-  build:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
+  win.loadURL("https://gta.ezgames.lol/");
+});
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build Mac app (works on Apple Silicon and Intel)
-        run: npx electron-builder --mac dmg --universal
-
-      - name: Upload dmg
-        uses: actions/upload-artifact@v4
-        with:
-          name: GTA5-mac
-          path: dist/*.dmg
+app.on("window-all-closed", () => {
+  app.quit();
+});
